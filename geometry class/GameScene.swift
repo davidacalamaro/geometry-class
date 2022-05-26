@@ -23,24 +23,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var moveBG = false
     var firstRun = 0
     let doJump = SKAction.init(named: "jump")
+    let rotate = SKAction.init(named: "rotate")
     
     override func didMove(to view: SKView)
     {
        // let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         //borderBody.friction = 0
         //self.physicsBody = borderBody
-        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        physicsWorld.gravity = CGVector(dx: 0, dy: -7.01)
         physicsWorld.contactDelegate = self
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        
+        //doJump.setValue(Any?.self, forKey: "jump")
+        //rotate.setValue(Any?.self, forKey: "rotate")
         
         spike = self.childNode(withName: "spike") as! SKSpriteNode
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
-        cube.physicsBody?.mass = 0.3
+        cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
-        
+        cube.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         
         
         createBg()
@@ -56,7 +57,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     func jump()
     {
-        cube.run(doJump!, withKey: "jump")
+    /*
+        let sequence = SKAction.sequence([doJump, rotate])
+        cube.run(sequence)
+        */
+        if tg == true
+        {
+            tg = false
+        }
+        cube.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 235), at: CGPoint(x: -50, y: -50))
+        cube.physicsBody?.applyAngularImpulse(500)
+       cube.run(rotate!, withKey: "rotate")
     }
 
     
@@ -78,7 +89,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
         {
             tg = true
-            // cube.removeAction(forKey: "rotate")
+            cube.removeAction(forKey: "rotate")
+            
         }
         
     }
@@ -95,6 +107,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     override func update(_ currentTime: TimeInterval) {
         ground.position.y = -155
+        //print(cube.zRotation * (.pi/180))
+        
         //print(cube.physicsBody?.allContactedBodies() as Any)
     
         if moveBG == true
@@ -103,29 +117,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             //print(cube.position.y)
             cube.physicsBody?.velocity.dx = 0.0
             spike.position.x -= 6.66666666
-            cube.physicsBody?.isDynamic = false
+          //  cube.physicsBody?.isDynamic = false
         }
+       
 
+        
         if touching == true && tg == true
         {
             jump()
-            print("should jump")
+           // print("should jump")
         }
         
         else
         {
-            print("touching \(touching)")
-                print("touch ground \(tg)")
+            //print("touching \(touching)")
+              //  print("touch ground \(tg)")
         }
        
         
-     /*
+     
         if Int(cube.position.y) <= -97
         {tg = true} //touch ground
         
         else
         {tg = false}
-       */
+       
 //
         
         if moveBG == true
