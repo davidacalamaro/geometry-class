@@ -4,85 +4,227 @@
 //
 //  Created by nope on 5/6/22.
 //
-
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate
+{
+    var gspeed: CGFloat = 1
+    var bg = SKSpriteNode()
+    var ground = SKSpriteNode()
+    var cube = SKSpriteNode()
+    var spike = SKSpriteNode()
     
-    private var label : SKLabelNode?
-    private var spinnyNode : SKShapeNode?
+    var dead = false
     
-    override func didMove(to view: SKView) {
+    var tg = false
+    var touching = false
+    var firstTouch = false
+    var moveBG = false
+    var firstRun = 0
+    let doJump = SKAction.init(named: "jump")
+    
+    override func didMove(to view: SKView)
+    {
+       // let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        //borderBody.friction = 0
+        //self.physicsBody = borderBody
+        physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        physicsWorld.contactDelegate = self
+        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        // Get label node from scene and store it for use later
-        self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
-        if let label = self.label {
-            label.alpha = 0.0
-            label.run(SKAction.fadeIn(withDuration: 2.0))
+        
+        
+        spike = self.childNode(withName: "spike") as! SKSpriteNode
+        cube = self.childNode(withName: "cube") as! SKSpriteNode
+        cube.physicsBody?.allowsRotation = true
+        cube.physicsBody?.mass = 0.3
+        cube.physicsBody?.restitution = 0.0
+        
+        
+        
+        createBg()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0)
+    {
+        self.moveBG = true
+    }
+    
+    }
+    
+    
+    
+    func jump()
+    {
+        cube.run(doJump!, withKey: "jump")
+    }
+
+    
+
+    
+    
+    func didBegin(_ contact: SKPhysicsContact)
+    {
+        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 2) || (contact.bodyA.categoryBitMask == 2 && contact.bodyB.categoryBitMask == 1)
+        {
+          /*
+            particle(pos: contact.contactPoint)
+            cube.removeFromParent()
+            dead = true
+            print("dead")
+           */
         }
         
-        // Create shape node to use during mouse interaction
-        let w = (self.size.width + self.size.height) * 0.05
-        self.spinnyNode = SKShapeNode.init(rectOf: CGSize.init(width: w, height: w), cornerRadius: w * 0.3)
-        
-        if let spinnyNode = self.spinnyNode {
-            spinnyNode.lineWidth = 2.5
-            
-            spinnyNode.run(SKAction.repeatForever(SKAction.rotate(byAngle: CGFloat(Double.pi), duration: 1)))
-            spinnyNode.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
-                                              SKAction.fadeOut(withDuration: 0.5),
-                                              SKAction.removeFromParent()]))
-        }
-    }
-    
-    
-    func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
-        }
-    }
-    
-    func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
-        }
-    }
-    
-    func touchUp(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.red
-            self.addChild(n)
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let label = self.label {
-            label.run(SKAction.init(named: "Pulse")!, withKey: "fadeInOut")
+        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
+        {
+            tg = true
+            // cube.removeAction(forKey: "rotate")
         }
         
-        for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchMoved(toPoint: t.location(in: self)) }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        touching = true
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        touching = false
     }
-    
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for t in touches { self.touchUp(atPoint: t.location(in: self)) }
-    }
-    
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
+        ground.position.y = -155
+        //print(cube.physicsBody?.allContactedBodies() as Any)
+    
+        if moveBG == true
+        {
+            cube.position = CGPoint(x: -94.9, y: cube.position.y)
+            //print(cube.position.y)
+            cube.physicsBody?.velocity.dx = 0.0
+            spike.position.x -= 6.66666666
+            cube.physicsBody?.isDynamic = false
+        }
+
+        if touching == true && tg == true
+        {
+            jump()
+            print("should jump")
+        }
+        
+        else
+        {
+            print("touching \(touching)")
+                print("touch ground \(tg)")
+        }
+       
+        
+     /*
+        if Int(cube.position.y) <= -97
+        {tg = true} //touch ground
+        
+        else
+        {tg = false}
+       */
+//
+        
+        if moveBG == true
+        {
+        if gspeed == 1
+        {
+            moveBg(speed: 2, name: "bg")
+            moveBg(speed: 6.666666666, name: "ground")
+            
+        }
+
+    if dead == true
+    {
+        moveBG = false
+        moveBg(speed: 0, name: "bg")
+        moveBg(speed: 0, name: "ground")
+        spike.position.x = spike.position.x
+    }
+            
+            
+            
+
+
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    func createBg()
+    {
+        for i in 0...3
+        {
+            let bg = SKSpriteNode(imageNamed: "bgt")
+            bg.name = "bg"
+            bg.size = CGSize(width: 800, height: 800)
+            bg.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            bg.position = CGPoint(x: CGFloat(i) * bg.size.width, y: 212.5 /*-(self.frame.size.height / 2)*/)
+            bg.zPosition = -1
+            bg.physicsBody?.categoryBitMask = 999
+            self.addChild(bg)
+
+            let ground = SKSpriteNode(imageNamed: "ground")
+            ground.name = "ground"
+            ground.size = CGSize(width: 800, height: 65)
+            ground.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            ground.position = CGPoint(x: CGFloat(i) * bg.size.width, y: -155 /*-(self.frame.size.height / 2)*/)
+            ground.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 800, height: 65))
+            ground.physicsBody?.isDynamic = false
+            ground.physicsBody?.allowsRotation = false
+            ground.physicsBody?.affectedByGravity = false
+            ground.physicsBody?.pinned = false
+//            ground.physicsBody?.collisionBitMask = 1
+            ground.physicsBody?.categoryBitMask = 3
+            ground.zPosition = 2
+            ground.physicsBody?.restitution = 0.0
+            self.addChild(ground)
+        
+        }
+        
+    }
+    
+    func particle(pos: CGPoint)
+    {
+        if let emitterNode = SKEmitterNode(fileNamed: "death.sks")
+        {
+            emitterNode.position = pos
+            emitterNode.targetNode = self
+            emitterNode.zPosition = 3
+            addChild(emitterNode)
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    func moveBg(speed: Double, name: String)
+    {
+        self.enumerateChildNodes(withName: name, using:
+        ({
+        (node, error) in
+            
+            node.position.x -= speed
+         
+            
+            if node.position.x < -((self.scene?.size.width)!)-75
+            {
+//                node.position.x += (self.scene?.size.width)! * 3.8
+                node.position.x = 853.6
+            }
+        }))
     }
 }
