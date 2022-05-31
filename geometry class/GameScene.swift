@@ -17,6 +17,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     var dead = false
     
+    var jumping = false
     var tg = false
     var touching = false
     var firstTouch = false
@@ -30,7 +31,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
        // let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         //borderBody.friction = 0
         //self.physicsBody = borderBody
-        physicsWorld.gravity = CGVector(dx: 0, dy: -7.01)
+        physicsWorld.gravity = CGVector(dx: 0, dy: -12.01)
         physicsWorld.contactDelegate = self
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         //doJump.setValue(Any?.self, forKey: "jump")
@@ -42,7 +43,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
         cube.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        
+        cube.physicsBody?.angularDamping = -0.1
         
         createBg()
         
@@ -53,21 +54,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     }
     
-    
-    
     func jump()
     {
-    /*
-        let sequence = SKAction.sequence([doJump, rotate])
-        cube.run(sequence)
-        */
-        if tg == true
+
+        if touching == true
         {
-            tg = false
+        if jumping == false
+            {
+          //  cube.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 235), at: CGPoint(x: -50, y: -50))
+        //cube.physicsBody?.applyAngularImpulse(500)
+            cube.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 500))
+      cube.run(rotate!, withKey: "rotate")
+        jumping = true
+            }
         }
-        cube.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 235), at: CGPoint(x: -50, y: -50))
-        cube.physicsBody?.applyAngularImpulse(500)
-       cube.run(rotate!, withKey: "rotate")
+        
     }
 
     
@@ -88,9 +89,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
         {
-            tg = true
-            cube.removeAction(forKey: "rotate")
+            //tg = true
+            let cr = cube.zRotation * (180 / .pi)
+        print(cr)
             
+            if cr == 90 || cr == -90 || cr == 180 || cr == -180 || cr == 0
+            {
+                cube.removeAction(forKey: "rotate")
+                jumping = false
+            cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
+            jump()
+            
+            }
         }
         
     }
@@ -98,6 +108,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         touching = true
+        jump()
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
@@ -107,8 +118,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
     override func update(_ currentTime: TimeInterval) {
         ground.position.y = -155
-        //print(cube.zRotation * (.pi/180))
-        
+    //print(cube.zRotation * (180 / .pi))
+       // print(cube.zRotation)
         //print(cube.physicsBody?.allContactedBodies() as Any)
     
         if moveBG == true
@@ -122,25 +133,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate
        
 
         
-        if touching == true && tg == true
-        {
-            jump()
-           // print("should jump")
-        }
-        
-        else
-        {
-            //print("touching \(touching)")
-              //  print("touch ground \(tg)")
-        }
+//        if touching == true && tg == true
+//        {
+//            jump()
+//           // print("should jump")
+//
+//        }
+//
+//        else
+//        {
+//            //print("touching \(touching)")
+//              //  print("touch ground \(tg)")
+//        }
        
         
      
-        if Int(cube.position.y) <= -97
-        {tg = true} //touch ground
-        
-        else
-        {tg = false}
+//        if Int(cube.position.y) <= -97 //do math for cube position and ground position
+//        {tg = true} //touch ground
+//
+//        else
+//        {tg = false}
        
 //
         
