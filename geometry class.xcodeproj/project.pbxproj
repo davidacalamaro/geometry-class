@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		860492C7283FBC3100A9BCFC /* rotate.sks in Resources */ = {isa = PBXBuildFile; fileRef = 860492C6283FBC3100A9BCFC /* rotate.sks */; };
-		865B06402832AABA00DE90AD /* jump.sks in Resources */ = {isa = PBXBuildFile; fileRef = 865B063F2832AABA00DE90AD /* jump.sks */; };
 		865B0642283698D600DE90AD /* death.sks in Resources */ = {isa = PBXBuildFile; fileRef = 865B0641283698D600DE90AD /* death.sks */; };
 		86C4ABDB2825593400ED913F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C4ABDA2825593400ED913F /* AppDelegate.swift */; };
 		86C4ABDD2825593400ED913F /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 86C4ABDC2825593400ED913F /* GameScene.sks */; };
@@ -22,7 +21,6 @@
 
 /* Begin PBXFileReference section */
 		860492C6283FBC3100A9BCFC /* rotate.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = rotate.sks; sourceTree = "<group>"; };
-		865B063F2832AABA00DE90AD /* jump.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = jump.sks; sourceTree = "<group>"; };
 		865B0641283698D600DE90AD /* death.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = death.sks; sourceTree = "<group>"; };
 		86C4ABD72825593400ED913F /* geometry class.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "geometry class.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		86C4ABDA2825593400ED913F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -50,7 +48,6 @@
 			isa = PBXGroup;
 			children = (
 				860492C6283FBC3100A9BCFC /* rotate.sks */,
-				865B063F2832AABA00DE90AD /* jump.sks */,
 				86C4ABD92825593400ED913F /* geometry class */,
 				86C4ABD82825593400ED913F /* Products */,
 			);
@@ -141,7 +138,6 @@
 				860492C7283FBC3100A9BCFC /* rotate.sks in Resources */,
 				86C4ABE62825593400ED913F /* Main.storyboard in Resources */,
 				86C4ABDD2825593400ED913F /* GameScene.sks in Resources */,
-				865B06402832AABA00DE90AD /* jump.sks in Resources */,
 				86C4ABE82825593A00ED913F /* Assets.xcassets in Resources */,
 				86C4ABEB2825593A00ED913F /* LaunchScreen.storyboard in Resources */,
 				865B0642283698D600DE90AD /* death.sks in Resources */,
