@@ -16,9 +16,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var cube = SKSpriteNode()
     var spike = SKSpriteNode()
     var level = SKSpriteNode()
+    var Ccamera = SKCameraNode()
     
     var dead = false
     
+    var followCamY = 0.0
+    var camPosY = 0.0
+    var camPosX = 0.0
     var jumping = false
     var tg = false
     var touching = false
@@ -27,6 +31,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var firstRun = 0
     let doJump = SKAction.init(named: "jump")
     let rotate = SKAction.init(named: "rotate")
+    var camUp = SKAction.init(named: "camera up")
     let arr1 = [83, 84, 85, 86, 87, 88, 89, 90, 91, 92]
     let arr2 = [ -83, -84, -85, -86, -87, -88, -89, -90, -91, -92, -93, -94, -95, -96]
     let arr3 = [173, 174, 175, 176, 177, 178, 179, 180, 181, 182]
@@ -38,21 +43,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate
        // let borderBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         //borderBody.friction = 0
         //self.physicsBody = borderBody
-        physicsWorld.gravity = CGVector(dx: 0, dy: -12.01)
+        physicsWorld.gravity = CGVector(dx: 0, dy: -17.7820551)
         physicsWorld.contactDelegate = self
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         //doJump.setValue(Any?.self, forKey: "jump")
         //rotate.setValue(Any?.self, forKey: "rotate")
         
+        Ccamera = (self.childNode(withName: "camera") as! SKCameraNode)
+        
         level = self.childNode(withName: "test") as! SKSpriteNode
-     //   spike = self.childNode(withName: "spike") as! SKSpriteNode
+        spike = level.childNode(withName: "spike") as! SKSpriteNode
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
         cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
         cube.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         cube.physicsBody?.angularDamping = -0.1
-        
+        camPosY = Ccamera.position.y
+        camPosX = Ccamera.position.x
         createBg()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0)
@@ -71,7 +79,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             {
           //  cube.physicsBody?.applyImpulse(CGVector(dx: 0.0, dy: 235), at: CGPoint(x: -50, y: -50))
         //cube.physicsBody?.applyAngularImpulse(500)
-            cube.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 500))
+            cube.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 750.302043))
             tg = false
            time = 0
         jumping = true
@@ -89,12 +97,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     {
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 2) || (contact.bodyA.categoryBitMask == 2 && contact.bodyB.categoryBitMask == 1)
         {
-          /*
+          
             particle(pos: contact.contactPoint)
             cube.removeFromParent()
             dead = true
             print("dead")
-           */
+           
         }
         
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
@@ -104,9 +112,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 jumping = false
             cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
             jump()
+        }
+        
+        
+        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 4) || (contact.bodyA.categoryBitMask == 4 && contact.bodyB.categoryBitMask == 1)
+        
+        {
+            
+            
             
             
         }
+        
+        
         
     }
     
@@ -136,7 +154,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     
        if jumping == true
         {
-           print(cube.position.y)
+         //  print(cube.position.y)
            time += 1
            //print(time)
        }
@@ -181,14 +199,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     }
         
         
+        
+        
         if moveBG == true
         {
+            
             cube.position = CGPoint(x: -94.9, y: cube.position.y)
             //print(cube.position.y)
             cube.physicsBody?.velocity.dx = 0.0
-            //spike.position.x -= 6.66666666
+           // spike.position.x -= 6.66666666
+            
+            
             level.position.x -= 6.66666666
           //  cube.physicsBody?.isDynamic = false
+//            Ccamera.position = CGPoint(x: camPosX + cube.position.x, y: camPosY + cube.position.y)
+           if tg == true
+            {
+           
+               
+               
+               Ccamera.position.y = cube.position.y + 98
+               
+             // Ccamera.run(camUp!)
+               //create action to move ccamera up 98
+            
+           
+           }
+        
         }
        
 
