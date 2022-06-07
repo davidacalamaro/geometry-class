@@ -16,8 +16,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var cube = SKSpriteNode()
     var spike = SKSpriteNode()
     var level = SKSpriteNode()
+    var orb = SKSpriteNode()
     var Ccamera = SKCameraNode()
-    
+    var camUpBound = SKSpriteNode()
+    var camDownBound = SKSpriteNode()
     var dead = false
     
     var followCamY = 0.0
@@ -32,6 +34,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     let doJump = SKAction.init(named: "jump")
     let rotate = SKAction.init(named: "rotate")
     var camUp = SKAction.init(named: "camera up")
+    var preCamUp = 0.0
+    
     let arr1 = [83, 84, 85, 86, 87, 88, 89, 90, 91, 92]
     let arr2 = [ -83, -84, -85, -86, -87, -88, -89, -90, -91, -92, -93, -94, -95, -96]
     let arr3 = [173, 174, 175, 176, 177, 178, 179, 180, 181, 182]
@@ -50,17 +54,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         //rotate.setValue(Any?.self, forKey: "rotate")
         
         Ccamera = (self.childNode(withName: "camera") as! SKCameraNode)
-        
+        camUpBound = Ccamera.childNode(withName: "camUpBound") as! SKSpriteNode
+        camUpBound = Ccamera.childNode(withName: "camDownBound") as! SKSpriteNode
         level = self.childNode(withName: "test") as! SKSpriteNode
+        orb = level.childNode(withName: "orb") as! SKSpriteNode
         spike = level.childNode(withName: "spike") as! SKSpriteNode
-        cube = self.childNode(withName: "cube") as! SKSpriteNode
+        cube = Ccamera.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
         cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
         cube.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         cube.physicsBody?.angularDamping = -0.1
-        camPosY = Ccamera.position.y
-        camPosX = Ccamera.position.x
+        
         createBg()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0)
@@ -112,17 +117,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 jumping = false
             cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
             jump()
+            //preCamUp = cube.position.y
+        
         }
         
         
-        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 4) || (contact.bodyA.categoryBitMask == 4 && contact.bodyB.categoryBitMask == 1)
-        
-        {
-            
-            
-            
-            
-        }
         
         
         
@@ -140,11 +139,60 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     }
     
     override func update(_ currentTime: TimeInterval) {
-       
+      /*
+        print("orb frame \(orb.frame)")
+        print("orb pos \(orb.position)")
+        
+        print("cube position \(cube.position)")
+        
+        if orb.frame.contains(cube.position)
+        {
+            jump()
+            print("orb hit")
+        }
+        */
+       // print("camera \(Ccamera.position)")
+//        camPosY = Ccamera.position.y
+//        camPosX = Ccamera.position.x
+        
+      /*
+        if Int(camUpBound.position.y) == Int(cube.position.y) || Int(camUpBound.position.y) == Int(cube.position.y-1) || Int(camUpBound.position.y) == Int(cube.position.y+1)
+        {
+            Ccamera.position = CGPoint(x: -1.009429931640625, y: camPosY + cube.position.y)
+            print("cam")
+            camUpBound.position.y = Ccamera.position.y + cube.position.y
+        }
+        */
+        //doesnt work, fix this
+        print(camUpBound.position.y)
+        if cube.position.y > camUpBound.position.y-25
+        {
+            //Ccamera.position = CGPoint(x: -1.009429931640625, y: camPosY + cube.position.y)
+          
+            Ccamera.position.x = -1.009429931640625
+            Ccamera.run(camUp!, withKey: "camUp")
+            
+            
+            print("cam")
+            //camUpBound.position.y = Ccamera.position.y + cube.position.y
+            
+            if cube.position.y < camUpBound.position.y
+            {
+               // Ccamera.removeAction(forKey: "camUp")
+            }
+            
+        }
+        //
+        
+        
+        
+        
+        
+        
+        
+        
         ground.position.y = -155
-    //print(cube.zRotation * (180 / .pi))
-       // print(cube.zRotation)
-        //print(cube.physicsBody?.allContactedBodies() as Any)
+
         if jumping == true && cube.hasActions() == false
         {
             cube.run(rotate!, withKey: "rotate")
@@ -152,12 +200,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         
         let cr = Int(cube.zRotation * (180 / .pi))
     
-       if jumping == true
-        {
-         //  print(cube.position.y)
-           time += 1
-           //print(time)
-       }
         
         
     if tg == true
@@ -192,24 +234,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             cube.removeAction(forKey: "rotate")
             cube.zRotation = 0
         }
-    
-    
-    
-    
     }
-        
-        
-        
         
         if moveBG == true
         {
             
             cube.position = CGPoint(x: -94.9, y: cube.position.y)
-            //print(cube.position.y)
             cube.physicsBody?.velocity.dx = 0.0
-           // spike.position.x -= 6.66666666
-            
-            
             level.position.x -= 6.66666666
           //  cube.physicsBody?.isDynamic = false
 //            Ccamera.position = CGPoint(x: camPosX + cube.position.x, y: camPosY + cube.position.y)
@@ -218,7 +249,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
            
                
                
-               Ccamera.position.y = cube.position.y + 98
+               //Ccamera.position.y = cube.position.y + 98
                
              // Ccamera.run(camUp!)
                //create action to move ccamera up 98
@@ -331,3 +362,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         }))
     }
 }
+
+
+///.             camera does stuff here
+///|
+///|
+///|
+///|
+///|
+///|
+///|
+///|
+///|
+///-         camera does stuff here
+ 
+
+//camera moves up when hits point and stops moving when hits point again
