@@ -34,6 +34,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     let doJump = SKAction.init(named: "jump")
     let rotate = SKAction.init(named: "rotate")
     var camUp = SKAction.init(named: "camera up")
+    var camDown = SKAction.init(named: "camera down")
     var preCamUp = 0.0
     
     let arr1 = [83, 84, 85, 86, 87, 88, 89, 90, 91, 92]
@@ -54,12 +55,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         //rotate.setValue(Any?.self, forKey: "rotate")
         
         Ccamera = (self.childNode(withName: "camera") as! SKCameraNode)
-        camUpBound = Ccamera.childNode(withName: "camUpBound") as! SKSpriteNode
-        camUpBound = Ccamera.childNode(withName: "camDownBound") as! SKSpriteNode
+        camUpBound = self.childNode(withName: "camUpBound") as! SKSpriteNode
+        camDownBound = self.childNode(withName: "camDownBound") as! SKSpriteNode
         level = self.childNode(withName: "test") as! SKSpriteNode
         orb = level.childNode(withName: "orb") as! SKSpriteNode
         spike = level.childNode(withName: "spike") as! SKSpriteNode
-        cube = Ccamera.childNode(withName: "cube") as! SKSpriteNode
+        cube = self.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
         cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
@@ -103,9 +104,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 2) || (contact.bodyA.categoryBitMask == 2 && contact.bodyB.categoryBitMask == 1)
         {
           
-            particle(pos: contact.contactPoint)
-            cube.removeFromParent()
-            dead = true
+            //particle(pos: contact.contactPoint)
+            //cube.removeFromParent()
+           // dead = true
             print("dead")
            
         }
@@ -113,7 +114,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
         {
             tg = true
-                
+            
+            
                 jumping = false
             cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
             jump()
@@ -164,26 +166,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         }
         */
         //doesnt work, fix this
-        print(camUpBound.position.y)
-        if cube.position.y > camUpBound.position.y-25
+        
+        // change up bound to 87.5
+       // print("cam up \(camUpBound.position.y)")
+        //print("cube \(cube.position.y)")
+        //print(Ccamera.position)
+        if cube.position.y > camUpBound.position.y
         {
             //Ccamera.position = CGPoint(x: -1.009429931640625, y: camPosY + cube.position.y)
           
             Ccamera.position.x = -1.009429931640625
-            Ccamera.run(camUp!, withKey: "camUp")
+          //  Ccamera.run(camUp!, withKey: "camUp")
+           // camUpBound.run(camUp!, withKey: "camUpBound")
+            //camDownBound.run(camUp!, withKey: "camDownBound")
+            Ccamera.position.y += 1
             
             
             print("cam")
             //camUpBound.position.y = Ccamera.position.y + cube.position.y
             
-            if cube.position.y < camUpBound.position.y
-            {
-               // Ccamera.removeAction(forKey: "camUp")
+            if tg == true
+            {camUpBound.position.y = cube.position.y + 50//192.75300
+                camDownBound.position.y = cube.position.y - 3
             }
+        
             
         }
         //
         
+        if tg == false && cube.position.y < camDownBound.position.y
+        {
+//            Ccamera.position.x = -1.009429931640625
+//            Ccamera.run(camDown!, withKey: "camDown")
+//            camUpBound.run(camDown!, withKey: "camDownBound")
+//            camDownBound.run(camDown!, withKey: "camDownBound")
+            Ccamera.position.x = -1.009429931640625
+          //  Ccamera.run(camUp!, withKey: "camUp")
+           // camUpBound.run(camUp!, withKey: "camUpBound")
+            //camDownBound.run(camUp!, withKey: "camDownBound")
+            Ccamera.position.y -= 5
+            
+            
+            print("cam2")
+            //camUpBound.position.y = Ccamera.position.y + cube.position.y
+            
+            
+        }
         
         
         
@@ -378,3 +406,4 @@ class GameScene: SKScene, SKPhysicsContactDelegate
  
 
 //camera moves up when hits point and stops moving when hits point again
+
