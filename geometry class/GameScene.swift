@@ -58,7 +58,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         camUpBound = self.childNode(withName: "camUpBound") as! SKSpriteNode
         camDownBound = self.childNode(withName: "camDownBound") as! SKSpriteNode
         level = self.childNode(withName: "test") as! SKSpriteNode
-        orb = level.childNode(withName: "orb") as! SKSpriteNode
+        //orb = level.childNode(withName: "orb") as! SKSpriteNode
         spike = level.childNode(withName: "spike") as! SKSpriteNode
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
@@ -141,78 +141,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     }
     
     override func update(_ currentTime: TimeInterval) {
-      /*
-        print("orb frame \(orb.frame)")
-        print("orb pos \(orb.position)")
+     
+        print("cam \(camDownBound.position.y)")
+        print("cube \(cube.position.y)")
         
-        print("cube position \(cube.position)")
-        
-        if orb.frame.contains(cube.position)
-        {
-            jump()
-            print("orb hit")
-        }
-        */
-       // print("camera \(Ccamera.position)")
-//        camPosY = Ccamera.position.y
-//        camPosX = Ccamera.position.x
-        
-      /*
-        if Int(camUpBound.position.y) == Int(cube.position.y) || Int(camUpBound.position.y) == Int(cube.position.y-1) || Int(camUpBound.position.y) == Int(cube.position.y+1)
-        {
-            Ccamera.position = CGPoint(x: -1.009429931640625, y: camPosY + cube.position.y)
-            print("cam")
-            camUpBound.position.y = Ccamera.position.y + cube.position.y
-        }
-        */
-        //doesnt work, fix this
-        
-        // change up bound to 87.5
-       // print("cam up \(camUpBound.position.y)")
-        //print("cube \(cube.position.y)")
-        //print(Ccamera.position)
         if cube.position.y > camUpBound.position.y
         {
-            //Ccamera.position = CGPoint(x: -1.009429931640625, y: camPosY + cube.position.y)
-          
-            Ccamera.position.x = -1.009429931640625
-          //  Ccamera.run(camUp!, withKey: "camUp")
-           // camUpBound.run(camUp!, withKey: "camUpBound")
-            //camDownBound.run(camUp!, withKey: "camDownBound")
-            Ccamera.position.y += 1
-            
-            
-            print("cam")
-            //camUpBound.position.y = Ccamera.position.y + cube.position.y
-            
-            if tg == true
-            {camUpBound.position.y = cube.position.y + 50//192.75300
-                camDownBound.position.y = cube.position.y - 3
-            }
-        
-            
+            Ccamera.position.y += 3
+            camUpBound.position.y += 3
+            camUpBound.color = UIColor.green
+            camDownBound.position.y += 3
         }
-        //
         
-        if tg == false && cube.position.y < camDownBound.position.y
+       else if cube.position.y < camUpBound.position.y
         {
-//            Ccamera.position.x = -1.009429931640625
-//            Ccamera.run(camDown!, withKey: "camDown")
-//            camUpBound.run(camDown!, withKey: "camDownBound")
-//            camDownBound.run(camDown!, withKey: "camDownBound")
-            Ccamera.position.x = -1.009429931640625
-          //  Ccamera.run(camUp!, withKey: "camUp")
-           // camUpBound.run(camUp!, withKey: "camUpBound")
-            //camDownBound.run(camUp!, withKey: "camDownBound")
-            Ccamera.position.y -= 5
-            
-            
-            print("cam2")
-            //camUpBound.position.y = Ccamera.position.y + cube.position.y
-            
+           camUpBound.color = UIColor.yellow
+          
             
         }
-        
+        if camDownBound.position.y > cube.position.y
+        {
+            Ccamera.position.y -= 7
+            camUpBound.position.y -= 7
+            camDownBound.position.y -= 7
+        }
         
         
         
