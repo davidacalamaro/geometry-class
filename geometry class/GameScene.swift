@@ -104,10 +104,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 2) || (contact.bodyA.categoryBitMask == 2 && contact.bodyB.categoryBitMask == 1)
         {
           
-            //particle(pos: contact.contactPoint)
-            //cube.removeFromParent()
-           // dead = true
+            particle(pos: contact.contactPoint)
+            cube.removeFromParent()
+           dead = true
             print("dead")
+            let scene = GameScene(fileNamed: "GameScene")
+            let view = self.view as SKView?
+            scene?.scaleMode = SKSceneScaleMode.aspectFill
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                view!.presentScene(scene!)
+            }
            
         }
         
@@ -119,13 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate
                 jumping = false
             cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
             jump()
-            //preCamUp = cube.position.y
-        
         }
-        
-        
-        
-        
         
     }
     
@@ -222,20 +222,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             cube.position = CGPoint(x: -94.9, y: cube.position.y)
             cube.physicsBody?.velocity.dx = 0.0
             level.position.x -= 6.66666666
-          //  cube.physicsBody?.isDynamic = false
-//            Ccamera.position = CGPoint(x: camPosX + cube.position.x, y: camPosY + cube.position.y)
-           if tg == true
-            {
-           
-               
-               
-               //Ccamera.position.y = cube.position.y + 98
-               
-             // Ccamera.run(camUp!)
-               //create action to move ccamera up 98
-            
-           
-           }
         
         }
        
