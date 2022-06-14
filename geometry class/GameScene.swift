@@ -17,9 +17,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var spike = SKSpriteNode()
     var level = SKSpriteNode()
     var orb = SKSpriteNode()
+    var orb2 = SKSpriteNode()
     var Ccamera = SKCameraNode()
     var camUpBound = SKSpriteNode()
     var camDownBound = SKSpriteNode()
+    var attCount = 0
+    var attLabel = SKLabelNode()
     var dead = false
     
     var followCamY = 0.0
@@ -33,8 +36,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     var firstRun = 0
     let doJump = SKAction.init(named: "jump")
     let rotate = SKAction.init(named: "rotate")
+   
     var camUp = SKAction.init(named: "camera up")
     var camDown = SKAction.init(named: "camera down")
+   // let bgToBlue = SKAction.colorize(with: SKColor(_colorLiteralRed: 0, green: 360, blue: 0, alpha: 0), colorBlendFactor: 99.0, duration: 1.0)
+    let backgroundSound = SKAudioNode(fileNamed: "song.m4a")
     var preCamUp = 0.0
     
     let arr1 = [83, 84, 85, 86, 87, 88, 89, 90, 91, 92]
@@ -57,15 +63,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         Ccamera = (self.childNode(withName: "camera") as! SKCameraNode)
         camUpBound = self.childNode(withName: "camUpBound") as! SKSpriteNode
         camDownBound = self.childNode(withName: "camDownBound") as! SKSpriteNode
+        
         level = self.childNode(withName: "test") as! SKSpriteNode
-        //orb = level.childNode(withName: "orb") as! SKSpriteNode
+        orb = self.childNode(withName: "orb") as! SKSpriteNode
+        orb2 = self.childNode(withName: "orb2") as! SKSpriteNode
         spike = level.childNode(withName: "spike") as! SKSpriteNode
+        attLabel = spike.childNode(withName: "label") as! SKLabelNode
         cube = self.childNode(withName: "cube") as! SKSpriteNode
         cube.physicsBody?.allowsRotation = true
         cube.physicsBody?.mass = 0.0
         cube.physicsBody?.restitution = 0.0
         cube.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         cube.physicsBody?.angularDamping = -0.1
+      
+            self.addChild(backgroundSound)
+        
+        attLabel.text = "Attempt \(attCount)"
         
         createBg()
         
@@ -106,15 +119,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate
           
             particle(pos: contact.contactPoint)
             cube.removeFromParent()
-           dead = true
+            backgroundSound.run(SKAction.stop())
+            dead = true
+            attCount += 1
             print("dead")
             let scene = GameScene(fileNamed: "GameScene")
             let view = self.view as SKView?
             scene?.scaleMode = SKSceneScaleMode.aspectFill
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                view!.presentScene(scene!)
-            }
+                view!.presentScene(scene!) }
            
+
         }
         
         if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 3) || (contact.bodyA.categoryBitMask == 3 && contact.bodyB.categoryBitMask == 1)
@@ -126,6 +141,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             cube.physicsBody?.velocity = CGVector(dx: 0.0, dy: 0.0)
             jump()
         }
+        
+        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 7) || (contact.bodyA.categoryBitMask == 7 && contact.bodyB.categoryBitMask == 1)
+        {
+            tg = true
+            
+            gspeed = 2
+            cube.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 550.302043))
+            tg = false
+           
+        jumping = true
+            
+        }
+        if (contact.bodyA.categoryBitMask == 1 && contact.bodyB.categoryBitMask == 8) || (contact.bodyA.categoryBitMask == 8 && contact.bodyB.categoryBitMask == 1)
+        {
+            tg = true
+            
+            cube.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 500.302043))
+            tg = false
+           
+        jumping = true
+            
+        }
+        
+        
+        
+        
         
     }
     
@@ -141,16 +182,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate
     }
     
     override func update(_ currentTime: TimeInterval) {
-     
-        print("cam \(camDownBound.position.y)")
-        print("cube \(cube.position.y)")
+        
         
         if cube.position.y > camUpBound.position.y
         {
-            Ccamera.position.y += 3
-            camUpBound.position.y += 3
+            Ccamera.position.y += 7
+            camUpBound.position.y += 7
             camUpBound.color = UIColor.green
-            camDownBound.position.y += 3
+            camDownBound.position.y += 7
         }
         
        else if cube.position.y < camUpBound.position.y
@@ -165,11 +204,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             camUpBound.position.y -= 7
             camDownBound.position.y -= 7
         }
-        
-        
-        
-        
-        
         
         ground.position.y = -155
 
@@ -221,8 +255,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate
             
             cube.position = CGPoint(x: -94.9, y: cube.position.y)
             cube.physicsBody?.velocity.dx = 0.0
-            level.position.x -= 6.66666666
-        
+            
+            
+            
         }
        
 
@@ -234,9 +269,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate
         {
             moveBg(speed: 2, name: "bg")
             moveBg(speed: 6.666666666, name: "ground")
-            
+            level.position.x -= 6.66666666
+            orb.position.x -= 6.666666
+            orb2.position.x -= 6.666666
         }
 
+            else if gspeed == 2
+            {
+                moveBg(speed: 2.5, name: "bg")
+                moveBg(speed: 8.33333333, name: "ground")
+                level.position.x -= 8.33333333
+                orb.position.x -= 8.33333333
+                orb2.position.x -= 8.33333333
+            }
+            
+            
+            
+            
+            
+            
+            
     if dead == true
     {
         moveBG = false
